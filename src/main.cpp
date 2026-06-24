@@ -2,14 +2,22 @@
 
 #define SDA 33
 #define SCL 32
+#define left 16
+#define right 17
+#define rotate 18
+#define drop 19
 
 // Pre-define I2C functions
 void IIC_start();
 void IIC_send(unsigned char send_data);
 void IIC_end();
 
-unsigned char data[16] = {0x00, 0x00, 0x00, 0x00, 0x26, 0x41, 0x86, 0x80, 0x80, 0x80, 0x86, 0x41, 0x26, 0x00, 0x00, 0x00};
+// LED grid data 
+unsigned char data[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 bool matrix[16][8];
+
+// Button flags
+bool left_flag = 0, right_flag = 0, rotate_flag = 0, drop_flag = 0;
 
 void setup() 
 {
@@ -21,10 +29,19 @@ void setup()
         }
     }
 
+    // Setup I2C
     pinMode(SCL, OUTPUT);
     pinMode(SDA, OUTPUT);
     digitalWrite(SCL, LOW);
     digitalWrite(SDA, LOW);
+
+    // Setup buttons
+    pinMode(left, INPUT_PULLUP);
+    pinMode(right, INPUT_PULLUP);
+    pinMode(rotate, INPUT_PULLUP);
+    pinMode(drop, INPUT_PULLUP);
+
+    Serial.begin(115200);
 }
 
 void loop() 
@@ -58,6 +75,10 @@ void loop()
     IIC_send(0x8A);// set the brightness display
     IIC_end(); 
     /*************end the brightness display***************/ 
+
+    bool left_button = !digitalRead(left);
+    Serial.print("left button: "); Serial.println(left_button);
+
     delay(100);
 }
 

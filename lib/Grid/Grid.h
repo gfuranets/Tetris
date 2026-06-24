@@ -6,9 +6,10 @@ class Grid
 {
 private:
     bool grid[16][8];
-
+    
 public:
-    // 1. Store grid
+    
+    // 1. Store grid # DONE
     // 2. Manage borders
     // 3. Check collisions
     // 4. Lock tetrominos (delete current)

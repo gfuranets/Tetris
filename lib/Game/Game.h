@@ -6,11 +6,11 @@
 class Game
 {
 private:
+    Grid grid;
     Tetromino current;
 
 public:
     // 1. main game loop
-    // 2. scoring
     // 3. input managing
     // 4. spawning pieces
     // 5. detecting game over
