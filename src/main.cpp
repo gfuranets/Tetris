@@ -3,29 +3,12 @@
 #define SDA 33
 #define SCL 32
 
-unsigned char data_line = 0;
-unsigned char delay_count = 0;
-unsigned char data_display1 = 0;
-unsigned char data_display2 = 0;
-unsigned char data_display3 = 0;
-unsigned char data_display4 = 0;
-unsigned char data_display5 = 0;
-unsigned char data_display6 = 0;
-unsigned char data_display7 = 0;
-unsigned char data_display8 = 0;
-unsigned char data_display9 = 0;
-unsigned char data_display10 = 0;
-unsigned char data_display11 = 0;
-unsigned char data_display12 = 0;
-unsigned char data_display13 = 0;
-unsigned char data_display14 = 0;
-unsigned char data_display15 = 0;
-unsigned char data_display16 = 0;
+// Pre-define I2C functions
 void IIC_start();
 void IIC_send(unsigned char send_data);
 void IIC_end();
 
-unsigned char data[16] = {0x00,0x00,0x00,0x00,0x26,0x41,0x86,0x80,0x80,0x80,0x86,0x41,0x26,0x00,0x00,0x00};
+unsigned char data[16] = {0x00, 0x00, 0x00, 0x00, 0x26, 0x41, 0x86, 0x80, 0x80, 0x80, 0x86, 0x41, 0x26, 0x00, 0x00, 0x00};
 bool matrix[16][8];
 
 void setup() 
@@ -44,7 +27,6 @@ void setup()
     digitalWrite(SDA, LOW);
 }
 
-/*----------------------------------------------------------------*/
 void loop() 
 {
     /**************set the address plus 1***************/
@@ -79,7 +61,6 @@ void loop()
     delay(100);
 }
 
-/*----------------------------------------------------------------*/
 void IIC_start()
 {
     digitalWrite(SCL, LOW);
@@ -94,7 +75,7 @@ void IIC_start()
 
 void IIC_send(unsigned char send_data)
 {
-    for(char i = 0; i < 8; i++)
+    for (char i = 0; i < 8; i++)
     {
         digitalWrite(SCL, LOW);
         delayMicroseconds(3); 
