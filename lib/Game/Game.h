@@ -5,13 +5,17 @@
 
 class Game
 {
-private:
+public:
     Grid grid;
     Tetromino current;
 
-public:
+    Game();
+
+    void spawn();
+    void handleInput();
+    void mainLoop();
     // 1. main game loop
-    // 3. input managing
+    // 3. input managing (check with test tetromino + execute if possible)
     // 4. spawning pieces
     // 5. detecting game over
     // 6. timing + gravity
