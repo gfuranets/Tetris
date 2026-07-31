@@ -8,7 +8,7 @@
 #define D_PIN 19
 
 void IIC_start();
-void IIC_send(unsigned char send_data);
+void IIC_send(uint8_t send_data);
 void IIC_end();
 
 // Data buffer
@@ -149,7 +149,7 @@ void IIC_start()
 
 void IIC_send(uint8_t send_data)
 {
-	for(char i = 0;i < 8;i++)
+	for (uint8_t i = 0; i < 8; ++i)
 	{
 		digitalWrite(SCL_PIN, LOW);
 		delayMicroseconds(3); 
