@@ -13,6 +13,7 @@ public:
     int getSize() const;
     int getX() const;
     int getY() const;
+    bool** getView() const;
 
 private:
     bool view[4][4] {}; // Stores tetromino orientation
