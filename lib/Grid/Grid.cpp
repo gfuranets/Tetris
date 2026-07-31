@@ -1,5 +1,20 @@
 #include "Grid.h"
 
+bool** Grid::getGrid() const
+{
+    bool** g;
+
+    for (int i = 0; i < 16; ++i)
+    {
+        for (int j = 0; j < 8; ++j)
+        {
+            g[i][j] = grid[i][j];
+        }
+    }
+
+    return g;
+}
+
 bool Grid::isValid(const Tetromino& figure)
 {
     bool** view = figure.getView();

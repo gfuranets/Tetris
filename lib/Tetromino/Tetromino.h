@@ -7,13 +7,14 @@ class Tetromino
 public:
     Tetromino() = default;
     Tetromino(char shape);
-    void rotate();
-    void move(char dir);
 
     int getSize() const;
     int getX() const;
     int getY() const;
     bool** getView() const;
+
+    void rotate();
+    void move(char dir);
 
 private:
     bool view[4][4] {}; // Stores tetromino orientation
