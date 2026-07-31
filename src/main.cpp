@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "Game.h"
 
 #define SDA_PIN 33
 #define SCL_PIN 32
@@ -14,7 +15,8 @@ void IIC_end();
 // Data buffer
 uint8_t data[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-bool grid[16][8];
+// Define a game object
+Game game;
 
 void setup() 
 {
@@ -29,21 +31,13 @@ void setup()
 	pinMode(R_PIN, INPUT_PULLUP);
 	pinMode(C_PIN, INPUT_PULLUP);
 	pinMode(D_PIN, INPUT_PULLUP);
-
-	for (int i = 0; i < 16; ++i)
-	{
-		for (int j = 0; j < 8; ++j)
-		{
-			grid[i][j] = 0;
-		}
-	}
 }
 
 // Button variables
 bool r, l, c, d, r_flag, l_flag, c_flag, d_flag;
 
 // Test cursos - x, y
-int x = 0, y = 15;
+// int x = 0, y = 15;
 
 void loop() 
 {
@@ -65,10 +59,7 @@ void loop()
 	// Right
 	if (r == 1 && r_flag == 0)
 	{
-		Serial.println("right");
-		r_flag = 1;
-		++x;
-		if (x == 8) x = 0;
+		game.handleInput('R');
 		delay(5);
 
 	}
@@ -78,10 +69,7 @@ void loop()
 	// Left
 	if (l == 1 && l_flag == 0)
 	{
-		Serial.println("left");
-		l_flag = 1;
-		--x;
-		if (x < 0) x = 7;
+		game.handleInput('L');
 		delay(5);
 	}
 	else if (r == 0 && l_flag == 1)
@@ -90,9 +78,8 @@ void loop()
 	// Rotate	
 	if (c == 1 && c_flag == 0)
 	{
-		Serial.println("rotate");
-		c_flag = 1;
-		// Rotate
+		Tetromino c = game.getCurrent();
+		c.rotate();
 		delay(5);
 	}
 	else if (c == 0 && c_flag == 1)
@@ -101,26 +88,14 @@ void loop()
 	// Drop
 	if (d == 1 && d_flag == 0)
 	{
-		Serial.println("drop");
-		d_flag = 1;
-		y = 15;
+		game.handleInput('D');
 		delay(5);
 	}
 	else if (d == 0 && d_flag == 1)
 		d_flag = 0;
 	
 	// Sync data with grid
-	for (int i = 0; i < 16; ++i) 
-	{
-		// Clear a row
-		data[i] = 0;
-		for (int j = 0; j < 8; ++j)
-		{
-			if (grid[i][j]) data[i] |= 1 << j;
-		}
-	}
-
-	data[y] |= (1 << x);
+	game.display(data);
 
 	for (uint8_t i = 0; i < 16; ++i) 
 		IIC_send(data[i]);

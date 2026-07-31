@@ -18,5 +18,5 @@ public:
 
 private:
     bool view[4][4] {}; // Stores tetromino orientation
-    int x = 0, y = 0, size = 0; 
+    int x = 0, y = 15, size = 0; 
 };

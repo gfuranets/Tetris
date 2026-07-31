@@ -21,8 +21,6 @@ bool threePieceShapes[5][3][3] = {{{ 0, 1, 0 },
                                    { 0, 1, 1 },
                                    { 0, 0, 0 }}};
 
-Tetromino::Tetromino() : size(0), x(0), y(0) {}
-
 Tetromino::Tetromino(char shape)
 {
     switch (shape)
