@@ -11,7 +11,7 @@
 void IIC_start();
 void IIC_send(uint8_t data);
 void IIC_end();
-void sendFrame(uint8_t data);
+void sendFrame(uint8_t data[]);
 
 // Data buffer
 uint8_t data[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -20,7 +20,7 @@ uint8_t data[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0
 Game game;
 
 // Loop variable
-uint64_t last_time;
+uint32_t last_time;
 
 void setup() 
 {
@@ -45,16 +45,8 @@ bool r, l, c, d, r_flag, l_flag, c_flag, d_flag;
 
 void loop() 
 {
-    /**************set the address plus 1***************/
-    IIC_start();
-    IIC_send(0x40);// set the address plus 1 automatically
-    IIC_end();
-    /************end the process of address plus 1 *****************/
-    /************set the data display*****************/ 
-    IIC_start();
-    IIC_send(0xc0);// set the initial address as 0
+	// MANAGE USER INPUT
 
-	// Manage button pressing
 	r = !digitalRead(R_PIN);
 	l = !digitalRead(L_PIN);
 	c = !digitalRead(C_PIN);
@@ -101,28 +93,27 @@ void loop()
 	else if (d == 0 && d_flag == 1)
 		d_flag = 0;
 
+	/* --------------------------------------------------------- */
+
+	// TICK GRAVITY
+
 	if (millis() - last_time > 1000)
 	{
 		// Handle falling (default movement)
 		game.handleInput('F');
 		last_time = millis();
 	}
-	
-	// Clear screen + draw tetromino and sync grid with sending data
+
+	/* --------------------------------------------------------- */
+
+	// RENDER 
 	game.clear(data);
 	game.display(data);
 
-	for (uint8_t i = 0; i < 16; ++i) 
-		IIC_send(data[i]);
-
-    IIC_end();
-    /************end the data display*****************/
-    /*************set the brightness display***************/ 
-    IIC_start();
-    IIC_send(0x8A);// set the brightness display
-    IIC_end(); 
-    /*************end the brightness display***************/ 
-    delay(100);
+	/* --------------------------------------------------------- */
+	
+	// SEND
+	sendFrame(data);
 }
 
 void IIC_start()
@@ -166,4 +157,23 @@ void IIC_end()
 	delayMicroseconds(3);
 	digitalWrite(SDA_PIN, HIGH);
 	delayMicroseconds(3);
+}
+
+void sendFrame(uint8_t data[])
+{
+    IIC_start();
+    IIC_send(0x40); // auto-increment adress mode
+    IIC_end();
+ 
+    IIC_start();
+    IIC_send(0xc0); // start at adress 0
+	for (uint8_t i = 0; i < 16; ++i) 
+		IIC_send(data[i]);
+    IIC_end();
+
+    IIC_start();
+    IIC_send(0x8A); // brightness
+    IIC_end(); 
+
+    delay(10);
 }
