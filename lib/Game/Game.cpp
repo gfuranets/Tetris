@@ -1,26 +1,12 @@
 #include "Game.h"
 #include <cstdlib>
+#include <esp_system.h>
 
 Game::Game()
 {
-    srand(2);
-    int piece = rand() % 7;
-    char shape;
-
-    switch (piece)
-    {
-        case 0: shape = 'O'; break;
-        case 1: shape = 'T'; break;
-        case 2: shape = 'L'; break;
-        case 3: shape = 'J'; break;
-        case 4: shape = 'S'; break;
-        case 5: shape = 'Z'; break;
-        case 6: shape = 'I'; break;
-    }
-
-    current = Tetromino(shape);
-    test = Tetromino();
-    grid = Grid();
+    // Seed here, not in setup() - the global Game object is constructed first
+    srand(esp_random());
+    spawn();
 }
 
 Tetromino* Game::getCurrent() { return &current; }
@@ -63,11 +49,15 @@ void Game::handleInput(char movement)
 
         case 'D':
             *test = *current;
+            test->move('D');
 
-            while (!grid.isValid(*test))
+            while (grid.isValid(*test))
+            {
+                *current = *test;
                 test->move('D');
+            }
 
-            *current = *test;
+            land();
             break;
 
         default:
@@ -76,6 +66,8 @@ void Game::handleInput(char movement)
 
             if (grid.isValid(*test))
                 *current = *test;
+            else   
+                land();
     }
 }
 
@@ -106,4 +98,35 @@ void Game::display(uint8_t data[16]) const
                 data[row] |= (1 << col);
         }
     }
+}
+
+void Game::spawn()
+{
+    int piece = rand() % 7;
+    char shape;
+
+    switch (piece)
+    {
+        case 0: shape = 'O'; break;
+        case 1: shape = 'T'; break;
+        case 2: shape = 'L'; break;
+        case 3: shape = 'J'; break;
+        case 4: shape = 'S'; break;
+        case 5: shape = 'Z'; break;
+        case 6: shape = 'I'; break;
+    }
+
+    current = Tetromino(shape);
+}
+
+void Game::land()
+{
+    grid.lock(current);
+    grid.clearLines();
+    grid.shift();
+    spawn();
+    
+    // Restart the game if there is no room for new piece
+    if (!grid.isValid(current))
+        grid = Grid();
 }

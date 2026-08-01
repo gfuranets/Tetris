@@ -9,8 +9,9 @@
 #define D_PIN 19
 
 void IIC_start();
-void IIC_send(uint8_t send_data);
+void IIC_send(uint8_t data);
 void IIC_end();
+void sendFrame(uint8_t data);
 
 // Data buffer
 uint8_t data[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -63,6 +64,7 @@ void loop()
 	if (r == 1 && r_flag == 0)
 	{
 		game.handleInput('R');
+		r_flag = 1;
 		delay(5);
 
 	}
@@ -73,6 +75,7 @@ void loop()
 	if (l == 1 && l_flag == 0)
 	{
 		game.handleInput('L');
+		l_flag = 1;
 		delay(5);
 	}
 	else if (l == 0 && l_flag == 1)
@@ -82,6 +85,7 @@ void loop()
 	if (c == 1 && c_flag == 0)
 	{
 		game.handleInput('C');
+		c_flag = 1;
 		delay(5);
 	}
 	else if (c == 0 && c_flag == 1)
@@ -91,6 +95,7 @@ void loop()
 	if (d == 1 && d_flag == 0)
 	{
 		game.handleInput('D');
+		d_flag = 1;
 		delay(5);
 	}
 	else if (d == 0 && d_flag == 1)
@@ -104,7 +109,7 @@ void loop()
 	}
 	
 	// Clear screen + draw tetromino and sync grid with sending data
-	game.clear();
+	game.clear(data);
 	game.display(data);
 
 	for (uint8_t i = 0; i < 16; ++i) 
@@ -132,14 +137,14 @@ void IIC_start()
 	delayMicroseconds(3);
 }
 
-void IIC_send(uint8_t send_data)
+void IIC_send(uint8_t data)
 {
 	for (uint8_t i = 0; i < 8; ++i)
 	{
 		digitalWrite(SCL_PIN, LOW);
 		delayMicroseconds(3); 
 
-		if (send_data & 0x01)
+		if (data & 0x01)
 			digitalWrite(SDA_PIN, HIGH);
 		else
 			digitalWrite(SDA_PIN, LOW);
@@ -147,7 +152,7 @@ void IIC_send(uint8_t send_data)
 		delayMicroseconds(3);
 		digitalWrite(SCL_PIN, HIGH); 
 		delayMicroseconds(3);
-		send_data = send_data >> 1;
+		data = data >> 1;
 	}
 }
 

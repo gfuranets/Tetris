@@ -16,6 +16,8 @@ public:
     void handleInput(char movement);
     void clear(uint8_t data[16]) const;
     void display(uint8_t data[16]) const;
+    void spawn();
+    void land();
 
 private:
     Tetromino current, test;
