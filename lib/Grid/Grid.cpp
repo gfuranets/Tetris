@@ -1,46 +1,43 @@
 #include "Grid.h"
 
-bool** Grid::getGrid() const
-{
-    bool** g;
-
-    for (int i = 0; i < 16; ++i)
-    {
-        for (int j = 0; j < 8; ++j)
-        {
-            g[i][j] = grid[i][j];
-        }
-    }
-
-    return g;
-}
+bool Grid::get(int i, int j) const { return grid[i][j]; }
+void Grid::set(int i, int j, int val) { grid[i][j] = val; }
 
 bool Grid::isValid(const Tetromino& figure)
 {
-    bool** view = figure.getView();
     for (int i = 0; i < figure.getSize(); ++i)
     {
         for (int j = 0; j < figure.getSize(); ++j)
         {
-            if (view[i][j] && grid[figure.getY() + i][figure.getX() + j]) 
-                return false;
+            if (!figure.at(i, j)) continue;
+
+            int row = figure.getY() - i, col = figure.getX() + j;
+
+            // Check out of bounds
+            if (row < 0 || col < 0 || col > 7) return false; 
+            // Check overlaying
+            if (row < 16 && grid[row][col]) return false;
         }
     }
 
     return true;
 }
 
-bool Grid::collision(const Tetromino& figure)
+void Grid::shift(int row)
 {
-    bool** view = figure.getView();
-    for (int i = figure.getSize(); i >= 0; --i)
+    for (int j = 0; j < 8; ++j)
     {
-        for (int j = 0; j < figure.getSize(); ++j)
-        {
-            if (view[i][j] && grid[figure.getY() - i - 1][figure.getX() + j])
-                return true;
-        }
+        grid[row + 1][j] = grid[row][j];
+        grid[row][j] = 0;
     }
+}
 
-    return false;
+void Grid::clearLines()
+{
+
+}
+
+void Grid::lock() 
+{
+
 }

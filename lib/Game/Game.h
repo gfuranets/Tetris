@@ -9,11 +9,12 @@ class Game
 public:
     Game();
 
-    Tetromino getCurrent() const;
-    Tetromino getTest() const;
+    Tetromino* getCurrent();
+    Tetromino* getTest();
     Grid getGrid() const;
 
     void handleInput(char movement);
+    void clear(uint8_t data[16]) const;
     void display(uint8_t data[16]) const;
 
 private:

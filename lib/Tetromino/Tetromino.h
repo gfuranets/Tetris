@@ -11,7 +11,7 @@ public:
     int getSize() const;
     int getX() const;
     int getY() const;
-    bool** getView() const;
+    bool at(int i, int j) const;
 
     void rotate();
     void move(char dir);

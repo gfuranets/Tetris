@@ -89,17 +89,4 @@ void Tetromino::move(char dir)
 int Tetromino::getSize() const { return size; }
 int Tetromino::getX() const { return x; }
 int Tetromino::getY() const { return y; }
-
-bool** Tetromino::getView() const 
-{
-    bool** res;
-    for (int i = 0; i < getSize(); ++i)
-    {
-        for (int j = 0; j < getSize(); ++j)
-        {
-            res[i][j] = view[i][j];
-        }
-    }
-
-    return res;
-}
+bool Tetromino::at(int i, int j) const { return view[i][j]; }

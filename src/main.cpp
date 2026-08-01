@@ -18,6 +18,9 @@ uint8_t data[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0
 // Define a game object
 Game game;
 
+// Loop variable
+uint64_t last_time;
+
 void setup() 
 {
 	Serial.begin(115200);
@@ -72,14 +75,13 @@ void loop()
 		game.handleInput('L');
 		delay(5);
 	}
-	else if (r == 0 && l_flag == 1)
+	else if (l == 0 && l_flag == 1)
 		l_flag = 0;
 
 	// Rotate	
 	if (c == 1 && c_flag == 0)
 	{
-		Tetromino c = game.getCurrent();
-		c.rotate();
+		game.handleInput('C');
 		delay(5);
 	}
 	else if (c == 0 && c_flag == 1)
@@ -93,8 +95,16 @@ void loop()
 	}
 	else if (d == 0 && d_flag == 1)
 		d_flag = 0;
+
+	if (millis() - last_time > 1000)
+	{
+		// Handle falling (default movement)
+		game.handleInput('F');
+		last_time = millis();
+	}
 	
-	// Sync data with grid
+	// Clear screen + draw tetromino and sync grid with sending data
+	game.clear();
 	game.display(data);
 
 	for (uint8_t i = 0; i < 16; ++i) 

@@ -23,62 +23,87 @@ Game::Game()
     grid = Grid();
 }
 
-Tetromino Game::getCurrent() const { return current; }
-Tetromino Game::getTest() const { return test; }
+Tetromino* Game::getCurrent() { return &current; }
+Tetromino* Game::getTest() { return &test; }
 Grid Game::getGrid() const { return grid; }
 
 void Game::handleInput(char movement)
 {
-    Tetromino test = getTest();
-    Tetromino current = getCurrent();
+    Tetromino* test = getTest();
+    Tetromino* current = getCurrent();
 
     switch (movement)
     {
         case 'L':
-            test = current;
-            test.move('L');
+            *test = *current;
+            test->move('L');
 
-            if (grid.isValid(test)) 
-                current = test;
+            if (grid.isValid(*test)) 
+                *current = *test;
 
             break;
 
         case 'R':
-            test = current;
-            test.move('R');
+            *test = *current;
+            test->move('R');
 
-            if (grid.isValid(test)) 
-                current = test;
+            if (grid.isValid(*test)) 
+                *current = *test;
 
             break;
+        
+        case 'C':
+            *test = *current;
+            test->rotate();
+
+            if (grid.isValid(*test))
+                *current = *test;
+            
+            break;  
 
         case 'D':
-            test = current;
+            *test = *current;
 
-            while (!grid.isValid(test) && !grid.collision(test))
-                test.move('D');
+            while (!grid.isValid(*test))
+                test->move('D');
 
-            current = test;
+            *current = *test;
             break;
 
         default:
-            test = current;
-            test.move('D');
+            *test = *current;
+            test->move('D');
 
-            if (grid.isValid(test))
-                current = test;
+            if (grid.isValid(*test))
+                *current = *test;
     }
+}
+
+void Game::clear(uint8_t data[16]) const
+{
+    for (int i = 0; i < 16; ++i) data[i] = 0; 
 }
 
 void Game::display(uint8_t data[16]) const
 {   
-    bool** g = grid.getGrid();
-
+    // Draw static grid
     for (int i = 0; i < 16; ++i)
     {
         for (int j = 0; j < 8; ++j)
         {
-            data[i] |= (g[i][j] << j);
+            data[i] |= (grid.get(i, j) << j);
+        }
+    }
+
+    // Draw current tetromino
+    for (int i = 0; i < current.getSize(); ++i)
+    {
+        for (int j = 0; j < current.getSize(); ++j)
+        {
+            int row = current.getY() - i, col = current.getX() + j;
+
+            if (current.at(i, j) && row >= 0 && row < 16 && col >= 0 && col < 8)
+                data[row] |= (1 << col);
         }
     }
 }
